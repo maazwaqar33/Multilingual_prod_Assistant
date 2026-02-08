@@ -1,0 +1,86 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build outputs
+.next/
+dist/
+build/
+*.egg-info/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Database
+*.db
+*.sqlite
+todoevolve.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Planning docs (not for public repo)
+plan.md
+hackathon.md
+design.md
+task.md
+implementation_plan.md
+deployment_guide.md
+GAP_ANALYSIS.md
+K8s_CLOUD_NATIVE_ASSESSMENT.md
+HACKATHON_READINESS.md
+FINAL_REPORT.md
+walker.md
+walkthrough.md
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+error.log
+
+# Lock files (optional - keep if you want reproducible builds)
+# package-lock.json
+# uv.lock
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Static uploads (user data)
+backend/static/uploads/
+
+# Helm chart dependencies
+helm/charts/*/charts/
+
+# Large binaries & tools
+windows-amd64/
+minikube.exe
+kubectl.exe
+helm.exe
+helm.zip
+*.zip
+*.exe
+*.dll
+.spec-kit/
+tmp/
+.gemini/
+
+# Force ignore node_modules everywhere
+**/node_modules/
+**/.next/

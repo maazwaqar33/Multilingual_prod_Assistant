@@ -1,0 +1,120 @@
+# TodoEvolve - Cloud Native Microservices Architecture
+# Run: docker-compose up --build
+
+services:
+  # -------------------------------
+  # Core Infrastructure
+  # -------------------------------
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --overprovisioned
+      - --node-id 0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr=0.0.0.0:28082
+      - --advertise-pandaproxy-addr=localhost:28082
+    ports:
+      - 9092:9092
+      - 29092:29092
+    restart: unless-stopped
+
+  # -------------------------------
+  # Backend API & Sidecar
+  # -------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todoevolve-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8005:8000"
+      - "3505:3500" # Dapr HTTP Port
+    environment:
+      #- DATABASE_URL=postgresql://...
+      - DATABASE_URL=sqlite:///data/todoevolve.db
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-dev-super-secret-key-min-32-chars}
+      - CORS_ORIGINS=http://localhost:3005
+      - APP_ENV=development
+      - ENABLE_DAPR=true
+      - DAPR_HTTP_PORT=3500
+    volumes:
+      - backend_data:/app/data
+    depends_on:
+      - redis
+      - redpanda
+    restart: unless-stopped
+
+  backend-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "todo-backend", "-app-port", "8000", "-dapr-http-port", "3500", "-components-path", "/components", "-config", "/config/config.yaml" ]
+    volumes:
+      - "./dapr/components_docker:/components"
+      - "./dapr:/config"
+    depends_on:
+      - backend
+    network_mode: "service:backend"
+
+  # -------------------------------
+  # Scheduler Microservice & Sidecar
+  # -------------------------------
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todoevolve-scheduler
+    command: [ "uvicorn", "app.scheduler_service:app", "--host", "0.0.0.0", "--port", "8001" ]
+    ports:
+      - "8006:8001"
+    environment:
+      - DATABASE_URL=sqlite:///data/todoevolve.db
+      - ENABLE_DAPR=true
+      - DAPR_HTTP_PORT=3500
+    depends_on:
+      - redis
+      - redpanda
+    restart: unless-stopped
+
+  scheduler-dapr:
+    image: "daprio/daprd:latest"
+    command: [ "./daprd", "-app-id", "todo-scheduler", "-app-port", "8001", "-dapr-http-port", "3500", "-components-path", "/components", "-config", "/config/config.yaml" ]
+    volumes:
+      - "./dapr/components_docker:/components"
+      - "./dapr:/config"
+    depends_on:
+      - scheduler
+    network_mode: "service:scheduler"
+
+  # -------------------------------
+  # Frontend
+  # -------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todoevolve-frontend
+    ports:
+      - "3005:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8005
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+    driver: local

@@ -1,0 +1,16 @@
+apiVersion: v2
+name: todoevolve-backend
+description: TodoEvolve Backend API Helm Chart
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - fastapi
+  - api
+  - todoevolve
+  - backend
+
+maintainers:
+  - name: TodoEvolve Team
+    email: team@todoevolve.dev
