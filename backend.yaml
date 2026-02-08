@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-backend
+  template:
+    metadata:
+      labels:
+        app: todo-backend
+    spec:
+      containers:
+      - name: backend
+        image: maazwaqar076/todo-backend:azure
+        ports:
+        - containerPort: 8000
+        env:
+        - name: FRONTEND_URL
+          value: "https://todoevolve.centralindia.cloudapp.azure.com"
+        - name: CORS_ORIGINS
+          value: "*"
+        - name: GEMINI_API_KEY
+          value: "AIzaSyCuxRMOr_UctdXxR8fe5mU6iOiNAcQSw-c"
+        - name: SMTP_USER
+          value: "maazwaqar076@gmail.com"
+        - name: SMTP_PASS
+          value: "sewr vyqr pfly rfef"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: todo-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000

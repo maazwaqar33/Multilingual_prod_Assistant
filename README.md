@@ -5,6 +5,11 @@
 
 **TodoEvolve** is a next-generation productivity application that transforms a simple task list into an intelligent, voice-activated personal assistant. It combines modern web technologies with advanced AI agents to help you plan your day, manage tasks, and stay organized—in both **English and Urdu**.
 
+### 🚀 Live Demo (Azure AKS)
+- **Frontend App**: [http://todoevolve-app.centralindia.cloudapp.azure.com](http://todoevolve-app.centralindia.cloudapp.azure.com)
+- **Backend API**: [http://todoevolve-api.centralindia.cloudapp.azure.com/docs](http://todoevolve-api.centralindia.cloudapp.azure.com/docs)
+*(Note: Use Chrome Flag workaround for microphone access on HTTP)*
+
 ![Project Demo](https://placehold.co/800x400?text=TodoEvolve+Demo+Screen)
 
 ---
