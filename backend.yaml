@@ -14,20 +14,20 @@ spec:
     spec:
       containers:
       - name: backend
-        image: maazwaqar076/todo-backend:azure
+        image: 
         ports:
         - containerPort: 8000
         env:
         - name: FRONTEND_URL
-          value: "https://todoevolve.centralindia.cloudapp.azure.com"
+          value: ""
         - name: CORS_ORIGINS
           value: "*"
         - name: GEMINI_API_KEY
-          value: "AIzaSyCuxRMOr_UctdXxR8fe5mU6iOiNAcQSw-c"
+          value: ""
         - name: SMTP_USER
-          value: "maazwaqar076@gmail.com"
+          value: ""
         - name: SMTP_PASS
-          value: "sewr vyqr pfly rfef"
+          value: ""
 ---
 apiVersion: v1
 kind: Service
